@@ -7,7 +7,7 @@ namespace Buff
   BuffDetector::BuffDetector(std::string path, double conf, double nms)
   {
     // 加载编译模型
-    model = core.compile_model("/home/a/DIODE_Buff/src/buff_detect/model/best.xml", "CPU");
+    model = core.compile_model("/home/dhu/DIODE_Buff/src/buff_detect/model/best.xml", "GPU");
     // 创建推理请求
     request = model.create_infer_request();
     // 初始化图像数据大小

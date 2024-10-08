@@ -11,6 +11,7 @@ namespace Buff
   Eigen::Vector3d Track::geometry2eigen(geometry_msgs::msg::Point v)
   {
     Eigen::Vector3d eigen_v(v.x, v.y, v.z);
+    return eigen_v;
   }
 
   Track::Track(int max_delt_time_, double max_delt_angle_)

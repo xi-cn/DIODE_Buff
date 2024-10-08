@@ -3,10 +3,13 @@
 
 # include <rclcpp/rclcpp.hpp>
 # include <global_msg/msg/detect_msg.hpp>
+# include <cv_bridge/cv_bridge.h>
+# include <opencv2/opencv.hpp>
 
 # include "buff_predict/kalman.h"
 # include "buff_predict/solver.h"
 # include "buff_predict/tracker.h"
+# include "buff_detect/pnp.h"
 
 namespace Buff
 {
@@ -24,13 +27,16 @@ namespace Buff
       all_solver = std::make_shared<AllParamSolver>();
       theta_solver = std::make_shared<ThetaSolver>();
       param = new double[3]{0, 0, 0};
+      pnp = std::make_shared<PnP>("");
     }
   
   private:
     // 视觉检测消息回调函数
     void detectCallback(global_msg::msg::DetectMsg::SharedPtr msg);
     // 计算预测点
-  void predictPoint();
+    void predictPoint();
+    // 可视化展示
+    void showPredictResult(global_msg::msg::DetectMsg::SharedPtr msg);
 
     rclcpp::Subscription<global_msg::msg::DetectMsg>::SharedPtr detect_sub;
 
@@ -42,6 +48,8 @@ namespace Buff
     std::shared_ptr<AllParamSolver> all_solver;
     // theta角优化器
     std::shared_ptr<ThetaSolver> theta_solver;
+    // pnp规划器
+    std::shared_ptr<PnP> pnp;
 
     // 最大的mse
     double max_mse = 0.1;

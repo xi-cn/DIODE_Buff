@@ -26,12 +26,14 @@ add_executable( buff_predict
                 src/buff_predict_node.cpp 
                 src/kalman.cpp 
                 src/solver.cpp 
-                src/tracker.cpp)
+                src/tracker.cpp
+                ../buff_detect/src/pnp.cpp)
 
 
 include_directories(include 
   ${EIGEN3_INCLUDE_DIRS}
   ${PYTHON3_10_INLCUDE_DIRS}
+  "../buff_detect/include"
 )
 
 target_include_directories(buff_predict PUBLIC

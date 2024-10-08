@@ -8,3 +8,4 @@ geometry_msgs/Point buff2world_v
 geometry_msgs/Quaternion buff2camera_q
 geometry_msgs/Quaternion camera2world_q
 geometry_msgs/Quaternion buff2world_q
+sensor_msgs/Image src

@@ -28,6 +28,12 @@ namespace Buff
 
     // 求解预测点
     predictPoint();
+
+    // 可视化展示
+    if (true) {
+      showPredictResult(msg);
+    }
+    
   }
 
   // 计算预测点
@@ -42,7 +48,6 @@ namespace Buff
                     * (cos(param[1] * (track->getLastTime() + delay) + param[2]) - cos(param[1] * (track->getLastTime()) + param[2]))
                     + (2.090 - param[0]) * delay;
 
-    std::cout << dtheta << "  dtheta\n";
     // 预测点在最新扇页中的偏移
     predict2fan_v = Eigen::Vector3d(sin(dtheta)*0.7, (1-cos(dtheta))*0.7, 0);
     // 预测点在相机坐标系中的偏移
@@ -50,6 +55,30 @@ namespace Buff
     // 预测点在世界坐标系中的偏移
     predict2world_v = track->getLastFan().buff2world_q * predict2fan_v + track->getLastFan().buff2world_v;
 
+  }
+
+  // 可视化展示
+  void BuffPredictNode::showPredictResult(global_msg::msg::DetectMsg::SharedPtr msg)
+  {
+    int height = msg->src.height;  
+    int width = msg->src.width;  
+    int step_ = msg->src.step; 
+
+    // 将图像转换为bgr8格式
+    cv::Mat raw_image(height, width, CV_8UC3, const_cast<uint8_t*>(msg->src.data.data()), step_); 
+
+    cv::Mat centerPoint = (cv::Mat_<double>(1, 3) << predict2camera_v.x(), predict2camera_v.y(), predict2camera_v.z());
+    cv::Mat rvec = cv::Mat::zeros(1, 3, CV_64F);
+    cv::Mat tvec = cv::Mat::zeros(1, 3, CV_64F);
+
+    // 将相机中心映射到图片上
+    cv::Point p = pnp->projectPoints(centerPoint, rvec, tvec);
+
+    cv::circle(raw_image, p, 10, cv::Scalar(180, 90, 100), cv::FILLED);
+    cv::resize(raw_image, raw_image, cv::Size(raw_image.cols/2, raw_image.rows/2));
+    // 展示图像
+    cv::imshow("detect image", raw_image);
+    cv::waitKey(5);
   }
 }
 

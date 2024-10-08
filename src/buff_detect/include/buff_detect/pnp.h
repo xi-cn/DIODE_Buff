@@ -17,6 +17,8 @@ namespace Buff
 
       // pnp计算 图像 关键点
       global_msg::msg::DetectMsg run(cv::Mat &img, KeyPoints& key_points);
+      // 将空间点映射到图像上
+      cv::Point projectPoints(cv::Mat centerPoint, cv::Mat rvec, cv::Mat tvec);
 
     private:
       // 相机内参  

@@ -46,6 +46,7 @@ namespace Buff
       // cv::addText(image, "lost", cv::Point(0, 0), 5);
     }
     
+    cv::resize(image, image, cv::Size(image.cols/2, image.rows/2));
     cv::imshow("detect image", image);
     cv::waitKey(10);
   }
@@ -89,6 +90,15 @@ namespace Buff
       detect_msg.buff2world_v.set__x(buff2world_eigen_v.x());
       detect_msg.buff2world_v.set__y(buff2world_eigen_v.y());
       detect_msg.buff2world_v.set__z(buff2world_eigen_v.z());
+
+      // 图像数据
+      detect_msg.src.encoding = msg->encoding;
+      detect_msg.src.height = msg->height;
+      detect_msg.src.width = msg->width;
+      detect_msg.src.data = msg->data;
+      detect_msg.src.step = msg->step;
+      detect_msg.src.is_bigendian = msg->is_bigendian;
+      detect_msg.src.header = msg->header;
 
       // 发布消息
       detect_pub->publish(detect_msg);

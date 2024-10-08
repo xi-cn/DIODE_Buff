@@ -49,4 +49,15 @@ namespace Buff
 
     return detect_msg;
   }
+
+  // 将空间点映射到图像上
+  cv::Point PnP::projectPoints(cv::Mat centerPoint, cv::Mat rvec, cv::Mat tvec)
+  {
+    cv::Mat projectPoint = cv::Mat_<double>(1, 2);
+    // 将相机中心映射到图片上
+    cv::projectPoints(centerPoint, rvec, tvec, cameraMatrix, distCoeffs, projectPoint);
+
+    cv::Point p(projectPoint.at<double>(0), projectPoint.at<double>(1));
+    return p;
+  }
 } // namespace Buff
