@@ -2,6 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <thread>
+#include <iostream>
 
 class CameraRead : public rclcpp::Node
 {
@@ -19,7 +20,7 @@ private:
 
 void CameraRead::readVideo()
 {
-    cv::VideoCapture cap("/home/dhu/DIODE_Buff/src/buff_detect/buff_video/video_red.MP4");
+    cv::VideoCapture cap("/home/a/DIODE_Buff/src/buff_detect/buff_video/video_red.MP4");
     cv::Mat src;
     sensor_msgs::msg::Image msg;
     while (cap.read(src) && rclcpp::ok()) {

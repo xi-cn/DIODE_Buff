@@ -4,6 +4,9 @@ namespace Buff
 {
   void BuffPredictNode::detectCallback(global_msg::msg::DetectMsg::SharedPtr msg)
   {
+    // 维护扇页队列 移除旧的扇页
+    track->updateFans(this->get_clock()->now().nanoseconds());
+
     // 添加新的扇页
     track->addFan(msg);
     // 判断新加入的扇页是否需要滤波
@@ -16,6 +19,9 @@ namespace Buff
       cv::Mat estimateState = pf->correct(z);
       // 更新滤波后的速度
       fan.filter_speed = estimateState.at<double>(0, 0);
+      
+      std::cout << fan.time_ << "\n";
+      std::cout << fan.second << "\n\n";
     }
 
     // 优化求解
@@ -32,6 +38,7 @@ namespace Buff
     // 可视化展示
     if (true) {
       showPredictResult(msg);
+      // drawPredictCurve();
     }
     
   }
@@ -39,7 +46,7 @@ namespace Buff
   // 计算预测点
   void BuffPredictNode::predictPoint() {
     // 根据弹速计算延时
-    double delay = 0.3;
+    double delay = 0.15;
 
 
 
@@ -79,6 +86,37 @@ namespace Buff
     // 展示图像
     cv::imshow("detect image", raw_image);
     cv::waitKey(5);
+  }
+
+  // 绘制预测曲线
+  void BuffPredictNode::drawPredictCurve()
+  {
+    // 获取时间和速度
+    std::vector<double> time_recorder;
+    std::vector<double> speed_recorder;
+    std::vector<double> filter_speed_recorder;
+    std::vector<double> fit_speed_recorder;
+    for (auto iter = track->getFans().begin(); iter != track->getFans().end(); iter++) {
+      time_recorder.push_back(iter->second);
+      speed_recorder.push_back(iter->speed);
+      filter_speed_recorder.push_back(iter->filter_speed);
+    }
+    fit_speed_recorder.resize(time_recorder.size());
+    for (int i = 0; i < fit_speed_recorder.size(); ++i) {
+        fit_speed_recorder[i] = param[0]*sin(param[1]*time_recorder[i] + param[2]) + 2.090 - param[0];
+    }
+
+    matplotlibcpp::clf();
+    matplotlibcpp::subplot2grid(2, 1, 0);
+    matplotlibcpp::scatter(time_recorder, speed_recorder);
+    matplotlibcpp::ylim(0, 3);
+
+    matplotlibcpp::subplot2grid(2, 1, 1);
+    matplotlibcpp::scatter(time_recorder, filter_speed_recorder);
+    matplotlibcpp::plot(time_recorder, fit_speed_recorder);
+    matplotlibcpp::ylim(0, 3);
+
+    matplotlibcpp::pause(0.001);
   }
 }
 

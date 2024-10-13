@@ -25,7 +25,7 @@ namespace Buff
   {
     Fan fan;
     // 时间
-    fan.time_ = msg->header.stamp.nanosec;
+    fan.time_ = msg->timestamp;
     fan.second = double(fan.time_) / 1e9;
     // 坐标转换关系
     fan.buff2camera_q = geometry2eigen(msg->buff2camera_q);
@@ -60,7 +60,7 @@ namespace Buff
       }
       // 角度合适
       else {
-        fan.speed = fan.delt_angle / fan.delt_time;
+        fan.speed = fan.delt_angle / fan.delt_second;
       }
 
       fans.push_back(fan);
@@ -81,10 +81,10 @@ namespace Buff
   }
 
   // 维护扇页队列
-  void Track::updateFans(uint32_t now)
+  void Track::updateFans(uint64_t now)
   {
     while (!fans.empty()) {
-      if (now - fans.front().time_ > max_delt_time) {
+      if (now / 1e9 - fans.front().second > max_delt_time) {
         fans.pop_front();
       }
       else {

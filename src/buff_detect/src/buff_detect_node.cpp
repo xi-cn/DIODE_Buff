@@ -99,6 +99,7 @@ namespace Buff
       detect_msg.src.step = msg->step;
       detect_msg.src.is_bigendian = msg->is_bigendian;
       detect_msg.src.header = msg->header;
+      detect_msg.timestamp = this->get_clock()->now().nanoseconds();
 
       // 发布消息
       detect_pub->publish(detect_msg);

@@ -11,8 +11,8 @@ namespace Buff
 {
   struct Fan
   {
-    uint32_t time_;
-    uint32_t delt_time;
+    uint64_t time_;
+    uint64_t delt_time;
     double second;
     double delt_second;
     double delt_angle;
@@ -38,7 +38,7 @@ namespace Buff
     // 获取要滤波的扇页
     Fan& getFilterFan() {return fans.back();}
     // 维护扇页队列
-    void updateFans(uint32_t now);
+    void updateFans(uint64_t now);
     // 获取扇页队列
     std::list<Fan>& getFans() {return fans;}
     // 获取最近的时间

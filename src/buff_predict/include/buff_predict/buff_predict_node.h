@@ -5,6 +5,8 @@
 # include <global_msg/msg/detect_msg.hpp>
 # include <cv_bridge/cv_bridge.h>
 # include <opencv2/opencv.hpp>
+# include <vector>
+# include <buff_predict/matplotlibcpp.h>
 
 # include "buff_predict/kalman.h"
 # include "buff_predict/solver.h"
@@ -22,7 +24,7 @@ namespace Buff
         "/buff_detect", 10, std::bind(&BuffPredictNode::detectCallback, this, std::placeholders::_1)
       );
 
-      track = std::make_shared<Track>(1, M_PI * 0.4);
+      track = std::make_shared<Track>(10, M_PI * 0.4);
       pf = std::make_shared<Kalman>();
       all_solver = std::make_shared<AllParamSolver>();
       theta_solver = std::make_shared<ThetaSolver>();
@@ -37,6 +39,8 @@ namespace Buff
     void predictPoint();
     // 可视化展示
     void showPredictResult(global_msg::msg::DetectMsg::SharedPtr msg);
+    // 绘制预测曲线
+    void drawPredictCurve();
 
     rclcpp::Subscription<global_msg::msg::DetectMsg>::SharedPtr detect_sub;
 
