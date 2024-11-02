@@ -26,7 +26,7 @@ namespace Buff
     
     template <typename T>
     bool operator()(const T* const param, T* residuals) const {
-      residuals[0] = T(y) - (a * ceres::sin(w * T(x) + T(param[2])) + 2.09 - a);
+      residuals[0] = T(y) - (a * ceres::sin(w * T(x) + T(param[0])) + 2.09 - a);
       return true;
     }
 
@@ -42,6 +42,9 @@ namespace Buff
     AllParamSolver();
     double fit(double *param, const std::list<Fan>& fans);
   protected:
+    // 计算mse
+    double mse(double *param, const std::list<Fan>& fans);
+
     // 配置求解器
     ceres::Solver::Options options;  
     // 求解总结

@@ -14,10 +14,10 @@ namespace Buff
     return eigen_v;
   }
 
-  Track::Track(int max_delt_time_, double max_delt_angle_)
+  Track::Track(int max_delt_time_, double max_speed_)
   {
     this->max_delt_time = max_delt_time_;
-    this->max_delt_angle = max_delt_angle_;
+    this->max_speed = max_speed_;
   }
 
   // 添加新的扇页
@@ -53,16 +53,13 @@ namespace Buff
       // 角度差
       Eigen::Quaterniond delt_q = fans.back().buff2camera_q.inverse() * fan.buff2camera_q;
       fan.delt_angle = Eigen::AngleAxisd(delt_q).angle();
-      // 角度大于阈值
-      if (fan.delt_angle > max_delt_angle) {
+      // 角速度
+      fan.speed = fan.delt_angle / fan.delt_second;
+      // 角速度大于阈值
+      if (fan.speed > max_speed) {
         fan.speed = -1;
         fan.filter_speed = -1;
       }
-      // 角度合适
-      else {
-        fan.speed = fan.delt_angle / fan.delt_second;
-      }
-
       fans.push_back(fan);
     }
   }

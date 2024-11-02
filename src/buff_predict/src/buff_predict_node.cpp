@@ -19,17 +19,19 @@ namespace Buff
       cv::Mat estimateState = pf->correct(z);
       // 更新滤波后的速度
       fan.filter_speed = estimateState.at<double>(0, 0);
-      
-      std::cout << fan.time_ << "\n";
-      std::cout << fan.second << "\n\n";
     }
 
-    // 优化求解
-    if (cur_mse > max_mse) {
-      cur_mse = all_solver->fit(param, track->getFans());
-    }
-    else {
-      cur_mse = theta_solver->fit(param, track->getFans(), param[0], param[1]);
+    // 大符需要进行拟合
+    if (mode == 0){
+      // 优化求解
+      if (cur_mse > max_mse) {
+        cur_mse = all_solver->fit(param, track->getFans());
+      }
+      else {
+        cur_mse = theta_solver->fit(param, track->getFans(), param[0], param[1]);
+      }
+
+      std::cout << "mse: " << cur_mse << "\n";
     }
 
     // 求解预测点
@@ -38,7 +40,7 @@ namespace Buff
     // 可视化展示
     if (true) {
       showPredictResult(msg);
-      // drawPredictCurve();
+      drawPredictCurve();
     }
     
   }
@@ -51,9 +53,18 @@ namespace Buff
 
 
     // 预测角度差
-    double dtheta = - (param[0] / param[1])
-                    * (cos(param[1] * (track->getLastTime() + delay) + param[2]) - cos(param[1] * (track->getLastTime()) + param[2]))
-                    + (2.090 - param[0]) * delay;
+    double dtheta = 0;
+    // 大符模式
+    if (mode == 0) {
+      dtheta = - (param[0] / param[1])
+                * (cos(param[1] * (track->getLastTime() + delay) + param[2]) - cos(param[1] * (track->getLastTime()) + param[2]))
+                + (2.090 - param[0]) * delay;
+    }
+    // 小符模式
+    else {  
+      dtheta = small_speed * delay;
+    }
+    
 
     // 预测点在最新扇页中的偏移
     predict2fan_v = Eigen::Vector3d(sin(dtheta)*0.7, (1-cos(dtheta))*0.7, 0);

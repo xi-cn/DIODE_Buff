@@ -24,7 +24,7 @@ namespace Buff
         "/buff_detect", 10, std::bind(&BuffPredictNode::detectCallback, this, std::placeholders::_1)
       );
 
-      track = std::make_shared<Track>(10, M_PI * 0.4);
+      track = std::make_shared<Track>(10, 2.5);
       pf = std::make_shared<Kalman>();
       all_solver = std::make_shared<AllParamSolver>();
       theta_solver = std::make_shared<ThetaSolver>();
@@ -58,9 +58,12 @@ namespace Buff
     // 最大的mse
     double max_mse = 0.1;
     // 当前mse
-    double cur_mse = 10;
+    double cur_mse = 100;
     // a w theta
     double *param;
+
+    // 小符转速
+    double small_speed = M_PI / 3;
     // 当前弹速
     double cur_bullet_speed;
 
@@ -70,6 +73,9 @@ namespace Buff
     Eigen::Vector3d predict2camera_v;
     // 预测点在世界坐标中的偏移
     Eigen::Vector3d predict2world_v;
+
+    // 预测模式
+    int mode = 0; // 0为大符 1为小符
   };
 }
 

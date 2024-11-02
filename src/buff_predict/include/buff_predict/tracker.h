@@ -30,7 +30,7 @@ namespace Buff
   class Track
   {
   public:
-    Track(int max_delt_time_, double max_delt_angle_);
+    Track(int max_delt_time_, double max_speed_);
     // 添加新的扇页
     void addFan(global_msg::msg::DetectMsg::SharedPtr msg);
     // 判断是否需要滤波
@@ -55,7 +55,7 @@ namespace Buff
     // 扇页队列最长时间跨度
     int max_delt_time;
     // 两次扇页间最大角度差
-    double max_delt_angle;
+    double max_speed;
   };
 }
 
